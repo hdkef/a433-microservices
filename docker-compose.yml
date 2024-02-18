@@ -28,9 +28,6 @@ services:
     # attach networks
     networks:
       - item-network
-    # only expose to container (no to host)
-    expose:
-      - 27017:27017
 # define creation of networks & volumes
 networks:
   item-network:

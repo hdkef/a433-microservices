@@ -1,19 +1,13 @@
 #! /bin/bash
 
-# if error do not return err immediately
-set +e
-
-# remove latest tag and ignore error log
-docker rmi ghcr.io/hdkef/item-app:v1 2>/dev/null
-
-# if error return err immediately, do not execute next line
-set -e
-
 # build image with tag from commit
-docker build --tag "ghcr.io/hdkef/item-app:v1" .
+docker build --tag "item-app:v1" .
 
 # list all images
 docker images
+
+# tag image
+docker tag item-app:v1 ghcr.io/hdkef/item-app:v1
 
 # push v1 images
 
