@@ -1,0 +1,38 @@
+version: "3.7"
+
+services:
+  item-app:
+    # image from github container registry
+    image: ghcr.io/hdkef/item-app
+    container_name: item-app
+    # expose to host machine 80 -> 8080 internal container port
+    ports:
+      - 80:8080
+    # set restart policy as always
+    restart: always
+    # attach networks
+    networks:
+      - item-network
+    # make sure item-db run first
+    depends_on:
+      - item-db
+  item-db:
+    # image from dockerhub
+    image: mongo:3
+    container_name: item-db
+    # set restart policy as always
+    restart: always
+    # attach volume
+    volumes:
+      - app-db:/data/db
+    # attach networks
+    networks:
+      - item-network
+    # only expose to container (no to host)
+    expose:
+      - 27017:27017
+# define creation of networks & volumes
+networks:
+  item-network:
+volumes:
+  app-db:
