@@ -3,7 +3,7 @@ version: "3.7"
 services:
   item-app:
     # image from github container registry
-    image: ghcr.io/hdkef/item-app
+    image: ghcr.io/hdkef/item-app:v1
     container_name: item-app
     # expose to host machine 80 -> 8080 internal container port
     ports:
