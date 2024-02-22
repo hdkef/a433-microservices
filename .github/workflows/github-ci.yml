@@ -1,0 +1,33 @@
+name: CI for test
+
+on:
+  push:
+    branches: ["karsajobs"]
+
+jobs:
+  lint-dockerfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install and run Hadolint
+        run: |
+          sudo wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v2.9.0/hadolint-Linux-x86_64
+          sudo chmod +x /bin/hadolint
+          hadolint Dockerfile
+  test-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup go
+        uses: actions/setup-go@v4
+      - name: test
+        run: go test -v -short --count=1 $(go list ./...)
+  build-app-karsajobs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: login docker
+        run: echo "${{ secrets.REGISTRY_ACCESS_TOKEN }}" | docker login ghcr.io -u ${{ github.actorsecrets.REGISTRY_USERNAME }} --password-stdin
+      - name: build image
+        run: docker build -f=Dockerfile --tag=ghcr.io/hdkef/karsajobs:latest  .
+      - name: push image
+        run: docker push ghcr.io/hdkef/karsajobs:latest 
