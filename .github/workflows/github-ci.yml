@@ -8,16 +8,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # checkout / clone newest code
       - name: Checkout code
         uses: actions/checkout@v2
+      # do lint check on Dockerfile using hadolink
+      # download binaries hadolint and output it in /bin/hadolint
+      # add executable permission
+      # execute hadolint to Dockerfile
       - name: Install and run Hadolint
         run: |
           sudo wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v2.9.0/hadolint-Linux-x86_64
           sudo chmod +x /bin/hadolint
           hadolint Dockerfile
+      # login to gcr w/ secrets in github
       - name: login docker
         run: echo "${{ secrets.REGISTRY_ACCESS_TOKEN }}" | docker login ghcr.io -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+      # build image
       - name: build image
         run: docker build -f=Dockerfile --tag=ghcr.io/hdkef/karsajobs-ui:latest  .
+      # push image to gcr
       - name: push image
         run: docker push ghcr.io/hdkef/karsajobs-ui:latest
